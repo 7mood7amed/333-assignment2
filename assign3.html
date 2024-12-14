@@ -1,72 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Nationality Statistics</title>
+
     <!-- Link Pico CSS -->
     <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@1.5.6/css/pico.min.css">
+
     <style>
-        /* Custom Styles */
+        /* Center the table vertically and horizontally */
         body {
             margin: 0;
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-left: 10px;
+            padding-right: 10px;
         }
 
         main {
-            max-width: 90%; /* Prevent table from exceeding the screen width */
-            margin: 0 auto; /* Center the main content */
+            max-width: 100%;
             padding: 1rem;
         }
 
         table {
-            margin: 0 auto; /* Center the table horizontally */
-            width: 100%; /* Make the table responsive */
-            max-width: 1200px; /* Optional: Set a max width */
-            text-align: center; /* Center-align the table content */
+            width: 100%;
+            /* max-width: 1200px; */
+            text-align: center;
+            border-collapse: collapse; /* Ensure table borders collapse properly */
         }
 
         h1 {
             text-align: center;
+            margin-bottom: 1rem;
         }
 
         th {
             font-weight: bold;
+            background-color: white;
         }
 
-        td, th {
+        td,th{
             white-space: nowrap;
-            text-align: center; /* Center align the text inside cells */
+            text-align: start;
         }
 
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
+        tr:nth-child(odd) {
+            background-color: #f7f7f7;
         }
 
         @media screen and (max-width: 768px) {
             table {
-                font-size: 0.9rem; /* Adjust font size for smaller screens */
+                font-size: 0.9rem;
             }
         }
     </style>
 </head>
+
 <body>
     <script>
         // API URL
-        const apiUrl =
-            "https://data.gov.bh/api/explore/v2.1/catalog/datasets/01-statistics-of-students-nationalities_updated/records?where=colleges%20like%20%22IT%22%20AND%20the_programs%20like%20%22bachelor%22&limit=100";
+        const apiUrl = "https://data.gov.bh/api/explore/v2.1/catalog/datasets/01-statistics-of-students-nationalities_updated/records?where=colleges%20like%20%22IT%22%20AND%20the_programs%20like%20%22bachelor%22&limit=100";
 
         // Function to create the table structure
         function createTable() {
             const container = document.createElement("main");
-            container.classList.add("container");
 
+            // Create and append the title
             const title = document.createElement("h1");
-            title.textContent = "Student Nationality Statistics";
+            title.textContent = "University of Bahrain - Student Nationalities";
 
+            // Create and append the table
             const table = document.createElement("table");
             table.id = "data-table";
 
+            // Create and append the table header
             const thead = document.createElement("thead");
             thead.innerHTML = `
                 <tr>
@@ -79,20 +89,22 @@
                 </tr>`;
             table.appendChild(thead);
 
+            // Create and append the table body
             const tbody = document.createElement("tbody");
             table.appendChild(tbody);
 
             container.appendChild(title);
             container.appendChild(table);
-
             document.body.appendChild(container);
         }
 
+        // Function to fetch data from the API
         async function fetchData() {
             try {
                 const response = await fetch(apiUrl);
                 const data = await response.json();
 
+                // Check if data is available
                 if (data && data.results) {
                     populateTable(data.results);
                 } else {
@@ -104,13 +116,13 @@
             }
         }
 
+        // Function to populate the table with data
         function populateTable(results) {
             const tableBody = document.querySelector("#data-table tbody");
-            tableBody.innerHTML = "";
+            tableBody.innerHTML = ""; // Clear any existing content
 
             results.forEach((result) => {
                 const row = document.createElement("tr");
-
                 row.innerHTML = `
                     <td>${result.year || "N/A"}</td>
                     <td>${result.semester || "N/A"}</td>
@@ -119,24 +131,25 @@
                     <td>${result.colleges || "N/A"}</td>
                     <td>${result.number_of_students || "N/A"}</td>
                 `;
-
                 tableBody.appendChild(row);
             });
         }
 
+        // Function to display a "No data found" message
         function showNoDataMessage() {
             const tableBody = document.querySelector("#data-table tbody");
             tableBody.innerHTML = `
                 <tr>
                     <td colspan="6">No data found.</td>
-                </tr>
-            `;
+                </tr>`;
         }
 
+        // Initialize the script when the DOM content is loaded
         document.addEventListener("DOMContentLoaded", () => {
             createTable();
             fetchData();
         });
     </script>
 </body>
+
 </html>
